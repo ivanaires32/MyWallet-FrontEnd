@@ -1,23 +1,35 @@
 import styled from "styled-components"
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useFetcher, useNavigate } from "react-router-dom"
 import MyWalletLogo from "../components/MyWalletLogo"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import axios from "axios"
+import URL_base from "../URL_base"
 
 export default function SignInPage() {
   const [email, setEmail] = useState()
   const [password, setPassword] = useState()
   const [dados, setDados] = useState()
   const navigate = useNavigate()
+  const lsDados = localStorage.getItem("user")
 
-  function goHome() {
-    if (!email || !password) return alert("Campos obrigatorios")
-    axios.post("http://localhost:5000/sign-in", { email, password })
-      .then(res => {
+
+  useEffect(() => {
+    if (lsDados !== null) {
+      navigate("/home")
+    } else {
+      navigate("/")
+    }
+  }, [])
+
+
+  function goHome(e) {
+    e.preventDefault()
+    axios.post(`${URL_base}/sign-in`, { email, password })
+      .then(() => {
         navigate("/home")
-        setDados(res.data)
+        localStorage.setItem("user", email)
       })
-      .catch(err => console.log(err))
+      .catch(err => alert(err.response.data))
   }
 
   return (
