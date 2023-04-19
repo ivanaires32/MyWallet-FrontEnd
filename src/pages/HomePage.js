@@ -1,62 +1,91 @@
 import styled from "styled-components"
 import { BiExit } from "react-icons/bi"
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import axios from "axios"
 import URL_base from "../URL_base"
+import { useNavigate } from "react-router-dom"
+import Context from "../context/Context"
 
 
-export default function HomePage() {
-  const [dados, setDados] = useState()
-  const lsUser = JSON.parse(localStorage.getItem("user"))
-  const config = { headers: { Authorization: `Bearer ${lsUser.token}` } }
+export default function HomePage({ setTransacao }) {
+  const [dados, setDados] = useState([])
+  const [total, setTotal] = useState(0)
+  const lsDados = localStorage.getItem("token")
+  const config = { headers: { Authorization: `Bearer ${lsDados}` } }
+
+  const navigate = useNavigate()
+
+
+  function adicionarPositivo() {
+    setTransacao("entrada")
+    navigate(`/nova-transacao/positivo`)
+  }
+
+  function adicionarSaida() {
+    setTransacao("saída")
+    navigate(`/nova-transacao/saida`)
+  }
 
   useEffect(() => {
     axios.get(`${URL_base}/home`, config)
       .then(res => {
         setDados(res.data)
+        console.log(res.data)
       })
-      .catch(err => console.log(err.response.data))
+      .catch(err => alert(err.response.data))
   }, [])
+
+  useEffect(() => {
+    if (dados[0]) {
+      let soma = 0
+      for (let i = 0; i < dados.length; i++) {
+        if (dados[i].type === "saída") {
+          soma = soma - dados[i].value
+        } else {
+          soma += Number(dados[i].value)
+        }
+      }
+      setTotal(soma)
+    }
+  }, [dados])
+
+
+
   return (
     <HomeContainer>
       <Header>
-        <h1>{`Olá, ${dados.name}`}</h1>
+        <h1>{`Olá, ${dados.length !== 0 ? dados[0].name : ""}`}</h1>
         <BiExit />
       </Header>
 
       <TransactionsContainer>
         <ul>
-          <ListItemContainer>
-            <div>
-              <span>30/11</span>
-              <strong>Almoço mãe</strong>
-            </div>
-            <Value color={"negativo"}>120,00</Value>
-          </ListItemContainer>
+          {dados.map((t) => (
+            <ListItemContainer>
+              <div>
+                <span>{t.day}</span>
+                <strong>{t.description}</strong>
+              </div>
+              <Value color={t.type === "entrada" ? "positivo" : "negativo"}>{Number(t.value).toFixed(2).replace(".", ",")}</Value>
+            </ListItemContainer>
+          ))}
 
-          <ListItemContainer>
-            <div>
-              <span>15/11</span>
-              <strong>Salário</strong>
-            </div>
-            <Value color={"positivo"}>3000,00</Value>
-          </ListItemContainer>
         </ul>
 
         <article>
           <strong>Saldo</strong>
-          <Value color={"positivo"}>2880,00</Value>
+          <Value color={total >= 0 ? "positivo" : "negativo"}>{total.toFixed(2).replace(".", ",")}</Value>
         </article>
       </TransactionsContainer>
 
 
       <ButtonsContainer>
-        <button>
+        <button onClick={adicionarPositivo}>
           <AiOutlinePlusCircle />
           <p>Nova <br /> entrada</p>
         </button>
-        <button>
+        <button onClick={adicionarSaida}>
           <AiOutlineMinusCircle />
           <p>Nova <br />saída</p>
         </button>
@@ -65,6 +94,7 @@ export default function HomePage() {
     </HomeContainer>
   )
 }
+
 
 const HomeContainer = styled.div`
   display: flex;
@@ -87,6 +117,7 @@ const TransactionsContainer = styled.article`
   border-radius: 5px;
   padding: 16px;
   display: flex;
+  overflow-x: scroll;
   flex-direction: column;
   justify-content: space-between;
   article {
