@@ -14,7 +14,7 @@ export default function App() {
   return (
     <PagesContainer>
       <BrowserRouter>
-        <Context.Provider value={{ token, setToken }}>
+        <Context.Provider value={{ token: token, setToken }}>
           <Routes>
             <Route path="/" element={<SignInPage />} />
             <Route path="/cadastro" element={<SignUpPage />} />

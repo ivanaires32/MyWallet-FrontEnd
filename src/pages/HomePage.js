@@ -1,29 +1,27 @@
 import styled from "styled-components"
 import { BiExit } from "react-icons/bi"
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai"
-import { useContext, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import axios from "axios"
 import URL_base from "../URL_base"
-import Context from "../context/Context"
+
 
 export default function HomePage() {
   const [dados, setDados] = useState()
-  const context = useContext(Context)
+  const lsUser = JSON.parse(localStorage.getItem("user"))
+  const config = { headers: { Authorization: `Bearer ${lsUser.token}` } }
 
   useEffect(() => {
-    axios.get(`${URL_base}/home`, {
-      headers: {
-        Authorization: `Bearer ${context.token}`
-      }
-    })
-      .then(res => setDados(res.data))
+    axios.get(`${URL_base}/home`, config)
+      .then(res => {
+        setDados(res.data)
+      })
       .catch(err => console.log(err.response.data))
   }, [])
-
   return (
     <HomeContainer>
       <Header>
-        <h1>Olá, Fulano</h1>
+        <h1>{`Olá, ${dados.name}`}</h1>
         <BiExit />
       </Header>
 
