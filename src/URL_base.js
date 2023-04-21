@@ -1,5 +1,3 @@
-//const URL_base = "http://localhost:5000"
-
-const URL_base = "https://mywallet-api-fiy8.onrender.com"
+const URL_base = "http://localhost:5000"
 
 export default URL_base;

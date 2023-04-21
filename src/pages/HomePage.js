@@ -30,7 +30,6 @@ export default function HomePage({ setTransacao }) {
     axios.get(`${URL_base}/home`, config)
       .then(res => {
         setDados(res.data)
-        console.log(res.data)
       })
       .catch(err => alert(err.response.data))
   }, [])
@@ -54,19 +53,19 @@ export default function HomePage({ setTransacao }) {
   return (
     <HomeContainer>
       <Header>
-        <h1>{`Olá, ${dados.length !== 0 ? dados[0].name : ""}`}</h1>
+        <h1>{`Olá, ${dados.length > 0 ? dados[0].name : ""}`}</h1>
         <BiExit />
       </Header>
 
       <TransactionsContainer>
         <ul>
           {dados.map((t) => (
-            <ListItemContainer>
+            <ListItemContainer key={t._id}>
               <div>
                 <span>{t.day}</span>
                 <strong>{t.description}</strong>
               </div>
-              <Value color={t.type === "entrada" ? "positivo" : "negativo"}>{Number(t.value).toFixed(2).replace(".", ",")}</Value>
+              <Value color={t.type === "entrada" ? "positivo" : "negativo"}>{t.value ? Number(t.value).toFixed(2).replace(".", ",") : ""}</Value>
             </ListItemContainer>
           ))}
 
@@ -74,7 +73,7 @@ export default function HomePage({ setTransacao }) {
 
         <article>
           <strong>Saldo</strong>
-          <Value color={total >= 0 ? "positivo" : "negativo"}>{total.toFixed(2).replace(".", ",")}</Value>
+          <Value color={total >= 0 ? "positivo" : "negativo"}>{Number(total).toFixed(2).replace(".", ",")}</Value>
         </article>
       </TransactionsContainer>
 
