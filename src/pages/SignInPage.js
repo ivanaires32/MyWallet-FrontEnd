@@ -25,9 +25,9 @@ export default function SignInPage() {
     e.preventDefault()
     axios.post(`${URL_base}/sign-in`, { email, password })
       .then(res => {
-        navigate("/home")
         localStorage.setItem("token", res.data)
         context.setToken(res.data)
+        navigate("/home")
       })
       .catch(err => alert(err.response.data))
   }

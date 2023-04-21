@@ -26,12 +26,24 @@ export default function HomePage({ setTransacao }) {
     navigate(`/nova-transacao/saida`)
   }
 
+  function logOut() {
+    localStorage.removeItem("token")
+    navigate("/")
+  }
+
   useEffect(() => {
+
+    if (lsDados === null) {
+      navigate("/")
+    }
+
     axios.get(`${URL_base}/home`, config)
       .then(res => {
         setDados(res.data)
       })
       .catch(err => alert(err.response.data))
+
+
   }, [])
 
   useEffect(() => {
@@ -54,7 +66,7 @@ export default function HomePage({ setTransacao }) {
     <HomeContainer>
       <Header>
         <h1>{`Olá, ${dados.length > 0 ? dados[0].name : ""}`}</h1>
-        <BiExit />
+        <BiExit onClick={logOut} />
       </Header>
 
       <TransactionsContainer>
