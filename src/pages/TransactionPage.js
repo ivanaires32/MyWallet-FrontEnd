@@ -1,5 +1,5 @@
 import axios from "axios"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import styled from "styled-components"
 import URL_base from "../URL_base"
@@ -10,6 +10,10 @@ export default function TransactionsPage({ transacao }) {
   const lsDados = localStorage.getItem("token")
   const config = { headers: { Authorization: `Bearer ${lsDados}` } }
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!lsDados) return navigate("/")
+  }, [])
 
   function adicionar(e) {
     e.preventDefault()
