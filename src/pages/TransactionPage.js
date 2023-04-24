@@ -13,7 +13,7 @@ export default function TransactionsPage({ transacao }) {
 
   function adicionar(e) {
     e.preventDefault()
-    const obj = { value: value.replace(",", "."), description }
+    const obj = { value, description }
     axios.post(`${URL_base}/nova-transacao/${transacao}`, obj, config)
       .then(() => navigate("/home"))
       .catch(err => alert(err.response.data))
