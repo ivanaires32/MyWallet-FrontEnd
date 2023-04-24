@@ -51,16 +51,16 @@ export default function HomePage({ setTransacao }) {
       let soma = 0
       for (let i = 0; i < dados.length; i++) {
         if (dados[i].type === "saída") {
-          soma = soma - dados[i].value
-        } else {
+          soma -= Number(dados[i].value)
+        } else if (dados[i].type === "entrada") {
           soma += Number(dados[i].value)
+        } else {
+          return setTotal(soma)
         }
+        setTotal(soma)
       }
-      setTotal(soma)
     }
   }, [dados])
-
-
 
   return (
     <HomeContainer>
