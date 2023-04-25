@@ -34,7 +34,7 @@ export default function HomePage({ setTransacao }) {
   useEffect(() => {
 
     if (lsDados === null) {
-      navigate("/")
+      return navigate("/")
     }
 
     axios.get(`${URL_base}/home`, config)
