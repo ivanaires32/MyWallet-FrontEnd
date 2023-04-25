@@ -39,7 +39,11 @@ export default function HomePage({ setTransacao }) {
 
     axios.get(`${URL_base}/home`, config)
       .then(res => {
-        setDados(res.data)
+        let contador = []
+        for (let i = 1; i < res.data.length; i++) {
+          contador = [...contador, res.data[res.data.length - i]]
+        }
+        setDados(contador)
       })
       .catch(err => alert(err.response.data))
 
